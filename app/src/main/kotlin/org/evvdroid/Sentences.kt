@@ -20,6 +20,7 @@ object Sentences {
 		"deu" -> R.string.sample_text_deu
 		"ita" -> R.string.sample_text_ita
 		"pol" -> R.string.sample_text_pol
+		"rus" -> R.string.sample_text_rus
 		"jpn" -> R.string.sample_text_jpn
 		else -> R.string.sample_text
 	}
@@ -32,6 +33,7 @@ object Sentences {
 		"deu" -> R.string.preview_text_deu
 		"ita" -> R.string.preview_text_ita
 		"pol" -> R.string.preview_text_pol
+		"rus" -> R.string.preview_text_rus
 		"jpn" -> R.string.preview_text_jpn
 		else -> R.string.preview_text
 	}

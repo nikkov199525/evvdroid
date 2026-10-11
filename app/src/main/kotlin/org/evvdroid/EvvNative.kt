@@ -55,4 +55,7 @@ internal object EvvNative {
 	external fun languages(): IntArray
 
 	external fun version(): String
+
+	/** Where RuLex's lexicon is, for Russian. See [RussianLexicon]. */
+	external fun setRussianLexicon(path: String)
 }

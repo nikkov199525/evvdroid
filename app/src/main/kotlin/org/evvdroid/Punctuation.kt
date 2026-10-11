@@ -74,6 +74,41 @@ object Punctuation {
 		return collapseSpaces(out)
 	}
 
+	/**
+	 * Text with no mark left in it that the engine would say by name. Run
+	 * after [apply]: whatever that did not turn into a word would otherwise
+	 * reach the engine, which names a bracket, a quotation mark, a run of
+	 * commas or a full stop with no word before it, in English whatever the
+	 * language. What a mark is for besides its name is the pause, so a run of
+	 * marks after a word becomes the one mark that says how long, attached to
+	 * the word, where the engine never names it; a run with nothing before it
+	 * is a space. One mark alone inside a word or a number stays: 3.5, 10:30,
+	 * 1-го, don't. So does % after a digit, which the engine reads as part of
+	 * the number.
+	 */
+	fun quiet(text: String): String = MARK_RUN.replace(text) { m ->
+		val run = m.value
+		val start = m.range.first
+		val end = m.range.last + 1
+		val before = if (start > 0) text[start - 1] else ' '
+		val after = if (end < text.length) text[end] else ' '
+		val marks = run.filterNot { it.isWhitespace() }
+		when {
+			run.length == 1 && run[0] in INNER_MARKS && before.isLetterOrDigit() && after.isLetterOrDigit() -> run
+			run == "%" && before.isDigit() -> run
+			!before.isLetterOrDigit() -> " "
+			'?' in marks -> "? "
+			'!' in marks -> "! "
+			'.' in marks.replace("...", "") -> ". "
+			COMMA_MARKS.containsMatchIn(marks) -> ", "
+			else -> " "
+		}
+	}
+
+	private val MARK_RUN = Regex("""\s*(?:[^\p{L}\p{N}\s])(?:\s*[^\p{L}\p{N}\s])*""")
+	private const val INNER_MARKS = ".,:-/'’"
+	private val COMMA_MARKS = Regex("""[-,;:—–…]|\.\.\.""")
+
 	private fun collapseSpaces(text: String): String =
 		text.replace(Regex("""[ \t]+"""), " ")
 
@@ -95,6 +130,7 @@ object Punctuation {
 		"deu" -> GERMAN_MAP
 		"ita" -> ITALIAN_MAP
 		"pol" -> POLISH_MAP
+		"rus" -> RUSSIAN_MAP
 		else -> ENGLISH_MAP
 	}
 
@@ -270,5 +306,47 @@ object Punctuation {
 		';' to "średnik",
 		'?' to "znak zapytania",
 		'!' to "wykrzyknik"
+	)
+
+	private val RUSSIAN_MAP: Map<Char, String> = ENGLISH_MAP + mapOf(
+		'@' to "собака",
+		'#' to "решётка",
+		'$' to "доллар",
+		'%' to "процент",
+		'&' to "амперсанд",
+		'*' to "звёздочка",
+		'+' to "плюс",
+		'=' to "равно",
+		'/' to "слэш",
+		'\\' to "обратный слэш",
+		'_' to "подчёркивание",
+		'^' to "крышка",
+		'<' to "меньше",
+		'>' to "больше",
+		'~' to "тильда",
+		'(' to "открывающая скобка",
+		')' to "закрывающая скобка",
+		'[' to "открывающая квадратная скобка",
+		']' to "закрывающая квадратная скобка",
+		'{' to "открывающая фигурная скобка",
+		'}' to "закрывающая фигурная скобка",
+		'"' to "кавычка",
+		'“' to "кавычка",
+		'”' to "кавычка",
+		'‘' to "апостроф",
+		'’' to "апостроф",
+		'-' to "дефис",
+		'—' to "тире",
+		'–' to "тире",
+		'•' to "точка списка",
+		'…' to "многоточие",
+		'.' to "точка",
+		',' to "запятая",
+		':' to "двоеточие",
+		';' to "точка с запятой",
+		'?' to "вопросительный знак",
+		'!' to "восклицательный знак",
+		'|' to "вертикальная черта",
+		'`' to "обратный апостроф"
 	)
 }

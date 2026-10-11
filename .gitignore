@@ -35,3 +35,6 @@ keystore.properties
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# What native/build-nvda.sh is told to put somewhere outside the engine.
+dist/

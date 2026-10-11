@@ -19,6 +19,7 @@
 #include <android/log.h>
 
 #include "eci.h"
+#include "eci_russian.h"
 
 #define TAG "evvdroid"
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, TAG, __VA_ARGS__)
@@ -529,4 +530,18 @@ JNIEXPORT jstring JNICALL Java_org_evvdroid_EvvNative_version(JNIEnv* env, jclas
 	eciVersion(buffer);
 	buffer[sizeof buffer - 1] = 0;
 	return (*env)->NewStringUTF(env, buffer);
+}
+
+/* Where RuLex's lexicon is, which the app copies out of its assets: Russian
+   reads it the first time a Russian word is said after this. */
+JNIEXPORT void JNICALL Java_org_evvdroid_EvvNative_setRussianLexicon(JNIEnv* env, jclass cls, jstring path) {
+	const char* name;
+	(void)cls;
+	if (path == NULL)
+		return;
+	name = (*env)->GetStringUTFChars(env, path, NULL);
+	if (name == NULL)
+		return;
+	ru_setLexicon(name);
+	(*env)->ReleaseStringUTFChars(env, path, name);
 }

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="voice_label">Голос</string>
+	<string name="preview_language_label">Язык прослушивания</string>
+	<string name="gender_label">Пол</string>
+	<string name="gender_male">Мужской</string>
+	<string name="gender_female">Женский</string>
+
+	<string name="speed_label">Скорость</string>
+	<string name="pitch_label">Высота</string>
+	<string name="inflection_label">Интонация</string>
+	<string name="head_size_label">Размер головы</string>
+	<string name="roughness_label">Хрипота</string>
+	<string name="breathiness_label">Придыхание</string>
+	<string name="volume_label">Громкость</string>
+
+	<string name="speak_label">Прослушать образец</string>
+	<string name="reset_label">Сбросить голос по умолчанию</string>
+
+	<string name="pauses_label">Паузы</string>
+	<string name="pauses_keep">Не сокращать</string>
+	<string name="pauses_end">Сокращать в конце текста</string>
+	<string name="pauses_all">Сокращать все паузы</string>
+	<string name="phrase_prediction_label">Предсказание фраз</string>
+	<string name="abbreviations_label">Раскрывать сокращения</string>
+	<string name="read_emoji_label">Читать эмодзи словами</string>
+
+	<string name="dictionary_main">Основной словарь</string>
+	<string name="dictionary_root">Словарь корней</string>
+	<string name="dictionary_abbreviation">Словарь сокращений</string>
+	<string name="dictionary_emoji">Словарь эмодзи</string>
+	<string name="dictionary_none">Нет</string>
+	<string name="dictionary_entries">%1$s, слов: %2$d</string>
+	<string name="dictionary_remove">Удалить словари</string>
+
+	<string name="sample_rate_label">Частота дискретизации</string>
+	<string name="hertz">%1$d Гц</string>
+
+	<string name="percent">%1$d%%</string>
+	<string name="percent_spoken">%1$d%%</string>
+	<string name="labelled_value">%1$s: %2$s</string>
+	<string name="switch_on">Вкл.</string>
+	<string name="switch_off">Выкл.</string>
+	<string name="cancel">Отмена</string>
+
+	<string name="number_processing_label">Обрабатывать числа</string>
+	<string name="number_mode_label">Чтение чисел</string>
+	<string name="number_mode_default">Обычное</string>
+	<string name="number_mode_digits">По цифрам</string>
+	<string name="number_mode_pairs">Парами</string>
+	<string name="number_mode_triplets">Тройками</string>
+	<string name="number_mode_words">Словами</string>
+	<string name="number_time_label">Естественное чтение времени</string>
+	<string name="number_roman_label">Римские цифры</string>
+
+	<string name="punctuation_label">Произношение пунктуации</string>
+	<string name="punctuation_level_none">Нет</string>
+	<string name="punctuation_level_some">Некоторая</string>
+	<string name="punctuation_level_most">Большая часть</string>
+	<string name="punctuation_level_all">Вся</string>
+
+	<string name="dictionary_manage_words">Слова словаря (%1$s)</string>
+	<string name="dictionary_add_word">Добавить слово</string>
+	<string name="dictionary_edit_word">Изменить слово</string>
+	<string name="dictionary_delete_word">Удалить</string>
+	<string name="dictionary_word_key">Слово или фраза</string>
+	<string name="dictionary_word_say">Произношение или замена</string>
+	<string name="dictionary_case_sensitive">С учётом регистра</string>
+	<string name="dictionary_search_placeholder">Поиск слов</string>
+	<string name="dictionary_empty">В словаре нет записей</string>
+	<string name="dictionary_save">Сохранить</string>
+	<string name="dictionary_close">Закрыть</string>
+	<string name="dictionary_delete">Удалить</string>
+	<string name="dictionary_import">Импортировать файл</string>
+	<string name="dictionary_word_item_desc">%1$s произносится как %2$s</string>
+	<string name="dictionary_word_item_cs_desc">%1$s (с учётом регистра) произносится как %2$s</string>
+	<string name="dictionary_action_edit">Изменить запись</string>
+	<string name="dictionary_action_suspend">Отключить запись</string>
+	<string name="dictionary_action_resume">Включить запись</string>
+	<string name="dictionary_action_delete">Удалить запись</string>
+	<string name="dictionary_word_suspended_suffix">, отключена</string>
+	<string name="dictionary_more_options">Действия для %1$s</string>
+</resources>

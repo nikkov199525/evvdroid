@@ -36,6 +36,7 @@ class EvvTtsService : TextToSpeechService() {
 
 	override fun onCreate() {
 		settings = Settings(this)
+		RussianLexicon.install(this)
 		super.onCreate()
 	}
 
@@ -237,7 +238,11 @@ class EvvTtsService : TextToSpeechService() {
 		if (s?.processNumbers == true) {
 			processedText = Numbers.apply(
 				processedText,
-				mode = s.numberMode,
+				// The words are English ones. Russian's engine says a number in
+				// Russian words itself, so it is handed the digits.
+				mode = if (Eci.baseLanguage(target.language) == Eci.RUSSIAN &&
+					s.numberMode == Numbers.MODE_WORDS
+				) Numbers.MODE_DEFAULT else s.numberMode,
 				readTimeNaturally = s.readTimeNaturally,
 				readRomanNumerals = s.readRomanNumerals
 			)
@@ -253,6 +258,7 @@ class EvvTtsService : TextToSpeechService() {
 		if (s?.readPunctuation != false && punctLevel > Punctuation.LEVEL_NONE) {
 			processedText = Punctuation.apply(processedText, punctLevel, target.language)
 		}
+		processedText = Punctuation.quiet(processedText)
 		val text = TextFixes.apply(processedText)
 		if (text.isEmpty()) {
 			callback.start(target.sampleRateHz, AudioFormat.ENCODING_PCM_16BIT, 1)

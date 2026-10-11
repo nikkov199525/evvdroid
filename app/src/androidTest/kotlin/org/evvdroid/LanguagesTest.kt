@@ -87,6 +87,50 @@ class LanguagesTest {
 		assertEquals("Dvor\u00e1k", utf8(EngineText.encode(Eci.POLISH, "Dvo\u0159\u00e1k")))
 	}
 
+	/** Russian goes to the engine as written, in UTF-8, and the engine turns
+	 *  it into phonemes for the English module it is spoken by. The stress mark and the
+	 *  no-break space it groups thousands with are the engine's to read; the
+	 *  typography around them is flattened as it is for everyone else. */
+	@Test
+	fun russianKeepsItsCyrillicAndFlattensTheRest() {
+		assertEquals(RUSSIAN_SENTENCE, utf8(EngineText.encode(Eci.RUSSIAN, RUSSIAN_SENTENCE)))
+		assertEquals(
+			"\"да\" - моло́ко 1 000",
+			utf8(EngineText.encode(
+				Eci.RUSSIAN,
+				"«да» — моло́ко 1 000"
+			))
+		)
+	}
+
+	/** Russian is the English module speaking phonemes the engine writes for
+	 *  it, so a Russian word with neither р nor о in it -- the two sounds the
+	 *  Russian module says differently -- and the English module handed the
+	 *  same phonemes are the same samples. That is what says the transcription is in front
+	 *  of the module and is the whole of the difference. */
+	@Test
+	fun russianIsSpokenAsEnglishPhonemes() {
+		if (Eci.RUSSIAN !in EvvEngine.available) return
+		val english = EvvEngine.available.firstOrNull { it == 0x00010000 } ?: return
+		val russian = open(Eci.RUSSIAN)
+		val said = collect(russian, "да")
+		russian.close()
+		engine = null
+		val module = open(english)
+		val spelled = collect(module, "`[.1da]")
+		module.close()
+		engine = null
+		assertTrue("Russian said nothing", said.size > 4000)
+		// The first five milliseconds are faded in for Russian, which is the
+		// one thing about it the English module does not do.
+		val skip = 400
+		assertTrue("Russian and its phonemes differ in length", said.size == spelled.size)
+		assertTrue(
+			"Russian and its phonemes differ",
+			said.copyOfRange(skip, said.size).contentEquals(spelled.copyOfRange(skip, spelled.size))
+		)
+	}
+
 	/** Japanese has a romanizer in front of the engine and it reads Shift-JIS.
 	 *  A character it has no room for costs a space rather than a word. */
 	@Test
@@ -150,6 +194,8 @@ class LanguagesTest {
 		const val FRENCH = 0x00030000
 		const val FRENCH_SENTENCE = "Bonjour, ici Eloquence."
 		const val POLISH_SENTENCE = "Dzie\u0144 dobry, m\u00f3wi Eloquence."
+		const val RUSSIAN_SENTENCE =
+			"\u0417\u0434\u0440\u0430\u0432\u0441\u0442\u0432\u0443\u0439\u0442\u0435, \u0433\u043e\u0432\u043e\u0440\u0438\u0442 Eloquence."
 		const val JAPANESE_SENTENCE =
 			"\u3053\u3093\u306b\u3061\u306f\u3002\u30a4\u30ed\u30af\u30a8\u30f3\u30b9\u3067\u3059\u3002"
 
@@ -166,7 +212,8 @@ class LanguagesTest {
 			0x00040000 to "Hallo, hier spricht Eloquence.",
 			0x00050000 to "Ciao, qui parla Eloquence.",
 			0x00080000 to JAPANESE_SENTENCE,
-			0x00110000 to POLISH_SENTENCE
+			0x00110000 to POLISH_SENTENCE,
+			0x00120000 to RUSSIAN_SENTENCE
 		)
 	}
 }

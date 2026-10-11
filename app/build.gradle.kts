@@ -5,7 +5,7 @@ import java.util.Properties
 // engine gives that one to a caller who asks for no language in particular,
 // and the settings screen's preview is such a caller.
 val ALL_LANGUAGES = listOf(
-	"enus", "engb", "eses", "esus", "frfr", "frca", "dede", "itit", "plpl", "jajp"
+	"enus", "engb", "eses", "esus", "frfr", "frca", "dede", "itit", "plpl", "ruru", "jajp"
 )
 
 plugins {
@@ -20,6 +20,10 @@ val rulesForm = findProperty("evvdroid.rules") as String? ?: "c"
 val languages = findProperty("evvdroid.langs") as String?
 	?: ALL_LANGUAGES.joinToString(" ") { "lang/$it" }
 val nativeOut = layout.buildDirectory.dir("native/jniLibs")
+// RuLex's lexicon, which the native build writes and the app carries as an
+// asset rather than linking: it is GPL, and a file of its own. See
+// tools/russian/NOTICE in native/openevv.
+val nativeAssets = layout.buildDirectory.dir("native/assets")
 
 // Release signing, from a keystore.properties the repo does not carry. Without
 // it a clone still builds and the release APK comes out unsigned.
@@ -52,6 +56,7 @@ val buildNative by tasks.registering(Exec::class) {
 	inputs.property("rules", rulesForm)
 	inputs.property("langs", languages)
 	outputs.dir(nativeOut)
+	outputs.dir(nativeAssets)
 	val shell = if (OperatingSystem.current().isWindows) {
 		val git = System.getenv("PROGRAMFILES")?.let { file("$it/Git/bin/bash.exe") }
 		if (git != null && git.exists()) git.absolutePath else "bash"
@@ -63,6 +68,7 @@ val buildNative by tasks.registering(Exec::class) {
 	environment("RULES", rulesForm)
 	environment("LANGS", languages)
 	environment("OUT", nativeOut.get().asFile.absolutePath)
+	environment("ASSETS", nativeAssets.get().asFile.absolutePath)
 	val ndkEnv = System.getenv("ANDROID_NDK_HOME") ?: System.getenv("ANDROID_NDK_ROOT") ?: ""
 	if (ndkEnv.isNotEmpty()) {
 		environment("ANDROID_NDK_HOME", ndkEnv)
@@ -106,6 +112,13 @@ android {
 	sourceSets.getByName("main") {
 		kotlin.srcDirs("src/main/kotlin")
 		jniLibs.srcDirs(nativeOut)
+		assets.srcDirs(nativeAssets)
+	}
+
+	androidResources {
+		// Stored, not compressed, so the app can tell from its length alone
+		// whether the copy it made of the lexicon is current.
+		noCompress += "dat"
 	}
 
 	signingConfigs {

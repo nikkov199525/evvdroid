@@ -13,6 +13,7 @@ class SettingsActivity : ComponentActivity() {
 	private var model: SettingsModel? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
+		RussianLexicon.install(this)
 		super.onCreate(savedInstanceState)
 		val state = SettingsModel(this).also { model = it }
 		setContent {

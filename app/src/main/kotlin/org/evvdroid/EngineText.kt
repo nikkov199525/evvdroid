@@ -7,14 +7,20 @@ import java.nio.charset.CodingErrorAction
 /**
  * Android text turned into the bytes the language in force reads.
  *
- * Eight of the ten modules read the Windows Western byte set and [WesternText]
- * is the whole of what they want. Two do not.
+ * Eight of the eleven modules read the Windows Western byte set and [WesternText]
+ * is the whole of what they want. Three do not.
  *
  * Polish has eight letters that set has no room for, so the module declares
  * them and the engine converts its text from UTF-8 itself. Nothing else about
  * the text changes: a character the module does not declare still goes through
  * the Western list, so everything but those eight is flattened exactly as it is
  * for every other language.
+ *
+ * Russian is turned into phonemes by the engine itself, which the US English
+ * module then speaks: the engine decides each word's stress and sounds, says
+ * the numbers in Russian and the letters by their Russian names. So it wants
+ * the text as it was written, in UTF-8, with the Cyrillic left standing and
+ * everything else flattened as for every other language.
  *
  * Japanese has a romanizer in front of the engine and that reads Shift-JIS. The
  * code set a Japanese instance takes is fixed when the instance is made and the
@@ -31,6 +37,8 @@ object EngineText {
 		Eci.JAPANESE -> japanese(text)
 		Eci.POLISH -> WesternText.flatten(text) { it in POLISH_LETTERS }
 			.toByteArray(Charsets.UTF_8)
+		Eci.RUSSIAN -> WesternText.flatten(text) { isRussianOwn(it) }
+			.toByteArray(Charsets.UTF_8)
 		else -> WesternText.encode(text)
 	}
 
@@ -38,6 +46,16 @@ object EngineText {
 	 *  not, in both cases. Its o with an acute is in the Western set already
 	 *  and so is not here. */
 	private val POLISH_LETTERS = "ąćęłńśźżĄĆĘŁŃŚŹŻ"
+
+	/** What Russian text keeps for the engine to read itself: the Cyrillic
+	 *  block, which takes in the Ukrainian and Belarusian letters the engine
+	 *  reads as their nearest Russian, the stress mark a careful text puts over
+	 *  a vowel, which the engine passes over, and the no-break spaces Russian
+	 *  groups thousands with, which the engine reads as the one number they
+	 *  are. */
+	private fun isRussianOwn(c: Char): Boolean =
+		c in '\u0400'..'\u04ff' || c == '\u0301' || c == '\u00a0' || c == '\u202f' ||
+			c == '\u2009'
 
 	private val SHIFT_JIS: Charset? = runCatching { Charset.forName("Shift_JIS") }.getOrNull()
 

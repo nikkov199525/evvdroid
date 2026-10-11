@@ -105,10 +105,11 @@ object Eci {
 		"Reed", "Shelley", "Bobby", "Rocko", "Glen", "Sandy", "Grandma", "Grandpa"
 	)
 
-	/** The two languages that do not read the Windows Western byte set.
+	/** The three languages that do not read the Windows Western byte set.
 	 *  [EngineText] says what each of them takes instead. */
 	const val JAPANESE = 0x00080000
 	const val POLISH = 0x00110000
+	const val RUSSIAN = 0x00120000
 
 	/** A language word is the family in the top half, the code set in the third
 	 *  byte and the dialect in the bottom one. */
@@ -137,7 +138,8 @@ object Eci {
 		0x000d0000 to Triple("nor", "NOR", ""),
 		0x000e0000 to Triple("swe", "SWE", ""),
 		0x000f0000 to Triple("dan", "DNK", ""),
-		0x00110000 to Triple("pol", "POL", "")
+		0x00110000 to Triple("pol", "POL", ""),
+		0x00120000 to Triple("rus", "RUS", "")
 	)
 
 	/** The ISO-3 language and country an engine language answers to, which is

@@ -16,7 +16,7 @@ engine="$here/openevv"
 ABIS=${ABIS:-"arm64-v8a armeabi-v7a x86_64"}
 API=${API:-21}
 RULES=${RULES:-c}
-LANGS=${LANGS:-lang/enus lang/engb lang/eses lang/esus lang/frfr lang/frca lang/dede lang/itit lang/plpl lang/jajp}
+LANGS=${LANGS:-lang/enus lang/engb lang/eses lang/esus lang/frfr lang/frca lang/dede lang/itit lang/plpl lang/ruru lang/jajp}
 OUT=${OUT:-"$root/app/build/native/jniLibs"}
 JOBS=${JOBS:-$(nproc 2>/dev/null || echo 4)}
 
@@ -189,5 +189,13 @@ for abi in $ABIS; do
 	"$strip" "$OUT/$abi/libevvjni.so"
 	ls -l "$OUT/$abi/libevvjni.so"
 done
+
+# RuLex's lexicon, which the engine's Makefile writes beside its build when
+# LANGS names lang/ruru and the app carries as an asset rather than linking:
+# it is GPL. tools/russian/NOTICE in the engine says so.
+if [ -n "${ASSETS:-}" ] && [ -f "$engine/$build/rulex.dat" ]; then
+	mkdir -p "$ASSETS"
+	cp "$engine/$build/rulex.dat" "$ASSETS/rulex.dat"
+fi
 
 echo "native libraries are under $OUT"
