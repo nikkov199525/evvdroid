@@ -90,22 +90,26 @@ object Punctuation {
 		val run = m.value
 		val start = m.range.first
 		val end = m.range.last + 1
-		val before = if (start > 0) text[start - 1] else ' '
-		val after = if (end < text.length) text[end] else ' '
+		val before = if (start > 0) text[start - 1] else null
+		val after = if (end < text.length) text[end] else null
 		val marks = run.filterNot { it.isWhitespace() }
+		// A space where the run stood between two words, and nothing where the
+		// text already has one or ends.
+		val space = if (after != null && !after.isWhitespace()) " " else ""
 		when {
-			run.length == 1 && run[0] in INNER_MARKS && before.isLetterOrDigit() && after.isLetterOrDigit() -> run
-			run == "%" && before.isDigit() -> run
-			!before.isLetterOrDigit() -> " "
-			'?' in marks -> "? "
-			'!' in marks -> "! "
-			'.' in marks.replace("...", "") -> ". "
-			COMMA_MARKS.containsMatchIn(marks) -> ", "
-			else -> " "
+			run.length == 1 && run[0] in INNER_MARKS && before?.isLetterOrDigit() == true &&
+				after?.isLetterOrDigit() == true -> run
+			run == "%" && before?.isDigit() == true -> run
+			before?.isLetterOrDigit() != true -> if (before != null) space else ""
+			'?' in marks -> "?$space"
+			'!' in marks -> "!$space"
+			'.' in marks.replace("...", "") -> ".$space"
+			COMMA_MARKS.containsMatchIn(marks) -> ",$space"
+			else -> space
 		}
 	}
 
-	private val MARK_RUN = Regex("""\s*(?:[^\p{L}\p{N}\s])(?:\s*[^\p{L}\p{N}\s])*""")
+	private val MARK_RUN = Regex("""\s*(?:[^\p{L}\p{M}\p{N}\s])(?:\s*[^\p{L}\p{M}\p{N}\s])*""")
 	private const val INNER_MARKS = ".,:-/'’"
 	private val COMMA_MARKS = Regex("""[-,;:—–…]|\.\.\.""")
 

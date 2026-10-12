@@ -30,4 +30,17 @@ class PunctuationTest {
 		assertEquals("don't quoted", quiet("don't 'quoted'"))
 		assertEquals("50%", quiet("50%"))
 	}
+
+	@Test
+	fun anAccentWrittenAsACombiningMarkStaysOnItsLetter() {
+		assertEquals("Capek and ü", quiet("Capek and ü"))
+		assertEquals("й", quiet("й"))
+	}
+
+	@Test
+	fun nothingIsAddedAtTheEnd() {
+		assertEquals("Hello.", Punctuation.quiet("Hello."))
+		assertEquals("Hello.", Punctuation.quiet("Hello.\""))
+		assertEquals("a b", Punctuation.quiet("a (b"))
+	}
 }
